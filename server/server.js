@@ -23,7 +23,7 @@ app.use("/api/user", userRoutes);
 connectDB();
 
 sequelize
-  .sync({ force: true })
+  .sync()
   .then(() => {
     app.listen(5000, () => {
       console.log("Server is runing on port 5000");

@@ -10,6 +10,34 @@ router.get("/list", async (req, res) => {
     res.json(users);
   } catch (err) {
     console.log(err);
+    res.json({
+      message: "Error fetching users",
+      errors: err.errors.map((e) => e.message),
+    });
+  }
+});
+
+router.get("/listBy/:id", async (req, res) => {
+  try {
+    const userId = await req.params.id;
+    if (!userId) {
+      return res.json({
+        message: "userId is required",
+      });
+    }
+
+    const user = await User.findOne({
+      where: {
+        id: userId,
+      },
+    });
+    res.json(user);
+  } catch (err) {
+    console.log(err);
+    res.json({
+      message: "Error fetching users",
+      errors: err.errors.map((e) => e.message),
+    });
   }
 });
 
@@ -19,6 +47,10 @@ router.post("/create", async (req, res) => {
     res.json(user);
   } catch (err) {
     console.log(err);
+    res.json({
+      message: "Error creating user",
+      errors: err.errors.map((e) => e.message),
+    });
   }
 });
 
@@ -38,11 +70,11 @@ router.put("/update/:id", async (req, res) => {
       }
     );
 
-    for (let i = 0; i < data.addresses.length; i++) {
-      let cAddressData = data.addresses[i][i];
-      cAddressData.userId = userId;
-      const address = await Address.upsert(cAddressData);
-    }
+    // for (let i = 0; i < data.addresses.length; i++) {
+    //   let cAddressData = data.addresses[i][i];
+    //   cAddressData.userId = userId;
+    //   const address = await Address.upsert(cAddressData);
+    // }
 
     res.json({
       message: "update complete!",
@@ -50,12 +82,21 @@ router.put("/update/:id", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+    res.json({
+      message: "Error updating user",
+      errors: err.errors.map((e) => e.message),
+    });
   }
 });
 
 router.delete("/remove/:id", async (req, res) => {
   try {
     const userId = await req.params.id;
+    if (!userId) {
+      return res.json({
+        message: "userId is required",
+      });
+    }
     const result = await User.destroy({
       where: { id: userId },
     });
@@ -66,6 +107,10 @@ router.delete("/remove/:id", async (req, res) => {
     });
   } catch (err) {
     console.log(err);
+    res.json({
+      message: "Error deleting user",
+      errors: err.errors.map((e) => e.message),
+    });
   }
 });
 
