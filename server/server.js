@@ -7,6 +7,7 @@ const Address = require("./models/address");
 const cors = require("cors");
 
 const userRoutes = require("./routes/user");
+const authRoutes = require("./routes/auth");
 // const addressRoutes = require("./routes/address");
 
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/user", userRoutes);
+app.use("/api/auth", authRoutes);
 // app.use("/api/address", addressRoutes);
 
 // console.log(process.env.MARIADB_DB)
