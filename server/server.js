@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const { sequelize, connectDB } = require("./config/db");
 const User = require("./models/user");
 const Address = require("./models/address");
+const cors = require("cors");
 
 const userRoutes = require("./routes/user");
 // const addressRoutes = require("./routes/address");
@@ -12,7 +13,7 @@ dotenv.config();
 const app = express();
 
 app.use(morgan("dev"));
-
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
