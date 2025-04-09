@@ -6,11 +6,12 @@ import FormEditUser from "./components/FormEditUser";
 import Register from "./pages/auth/register";
 import Login from "./pages/auth/login";
 import Info from "./pages/Info";
+import Navbar from "./components/Navbar";
 
 const App = () => {
   return (
     <BrowserRouter>
-      <div className="text-4xl font-bold">
+      {/* <div className="text-4xl font-bold">
         <Link to={"/"} className="px-2">
           Home
         </Link>
@@ -26,7 +27,8 @@ const App = () => {
         <Link to={"/info"} className="px-2">
           Info
         </Link>
-      </div>
+      </div> */}
+      <Navbar />
 
       <Routes>
         <Route path="/edit/:id" element={<FormEditUser />} />
