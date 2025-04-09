@@ -1,22 +1,40 @@
 import React from "react";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
 import FormUser from "./components/FormUser";
-import { BrowserRouter, Router, Route, Routes } from "react-router-dom";
 import FormEditUser from "./components/FormEditUser";
 import Register from "./pages/auth/register";
 import Login from "./pages/auth/login";
+import Info from "./pages/Info";
 
 const App = () => {
   return (
     <BrowserRouter>
-      <div>
-        <div className="text-4xl font-bold">Form CRUD</div>
-        <Routes>
-          <Route path="/" element={<FormUser />} />
-          <Route path="/edit/:id" element={<FormEditUser />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/login" element={<Login />} />
-        </Routes>
+      <div className="text-4xl font-bold">
+        <Link to={"/"} className="px-2">
+          Home
+        </Link>
+        <Link to={"/register"} className="px-2">
+          Register
+        </Link>
+        <Link to={"/login"} className="px-2">
+          Login
+        </Link>
+        <Link to={"/form"} className="px-2">
+          Form
+        </Link>
+        <Link to={"/info"} className="px-2">
+          Info
+        </Link>
       </div>
+
+      <Routes>
+        <Route path="/edit/:id" element={<FormEditUser />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/form/:id" element={<FormUser />} />
+        <Route path="/info" element={<Info />} />
+      </Routes>
     </BrowserRouter>
   );
 };

@@ -1,63 +1,125 @@
-import React from "react";
-import { Button, Checkbox, Form, Input } from "antd";
-import { Link } from "react-router-dom";
-const onFinish = (values) => {
-  console.log("Success:", values);
-};
-const onFinishFailed = (errorInfo) => {
-  console.log("Failed:", errorInfo);
-};
-const Login = () => (
-  <>
-    <div className="text-center m-auto mt-40 font-bold text-2xl">
-      Login Page
-    </div>
-    <Form
-      name="basic"
-      labelCol={{ span: 8 }}
-      wrapperCol={{ span: 16 }}
-      style={{
-        maxWidth: 600,
-        margin: "0 auto",
-        marginTop: "20px",
-        padding: "20px",
-        border: "1px solid #ccc",
-        borderRadius: "8px",
-      }}
-      initialValues={{ remember: true }}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-    >
-      <Form.Item
-        label="Email"
-        name="email"
-        rules={[{ required: true, message: "Please input your email!" }]}
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Avatar from "@mui/material/Avatar";
+import Button from "@mui/material/Button";
+import TextField from "@mui/material/TextField";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Link from "@mui/material/Link";
+import Grid from "@mui/material/Grid";
+import Box from "@mui/material/Box";
+import LoginOutlinedIcon from "@mui/icons-material/LoginOutlined";
+import Typography from "@mui/material/Typography";
+import Container from "@mui/material/Container";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import theme from "../../components/Theme";
+import { create, login } from "../../Functions/auth";
+
+export default function Login() {
+  const navigate = useNavigate();
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+  });
+
+  const handleChange = (e) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    login(form)
+      .then((res) => {
+        console.log(res);
+        navigate("/form/" + res.data.id);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box
+        sx={{
+          backgroundColor: theme.palette.background.default || "#f5f5f5",
+          minHeight: "100vh",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
       >
-        <Input />
-      </Form.Item>
+        <Container component="main" maxWidth="xs">
+          <Box
+            sx={{
+              backgroundColor: "#fff",
+              padding: 4,
+              borderRadius: 2,
+              boxShadow: 3,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
+              <LoginOutlinedIcon />
+            </Avatar>
+            <Typography component="h1" variant="h5">
+              Sign in
+            </Typography>
+            <Box
+              component="form"
+              onSubmit={handleSubmit}
+              noValidate
+              sx={{ mt: 1 }}
+            >
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                onChange={(e) => handleChange(e)}
+              />
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                onChange={(e) => handleChange(e)}
+              />
 
-      <Form.Item
-        label="Password"
-        name="password"
-        rules={[{ required: true, message: "Please input your password!" }]}
-      >
-        <Input.Password />
-      </Form.Item>
-
-      {/* <Form.Item name="remember" valuePropName="checked" label={null}>
-      <Checkbox>Remember me</Checkbox>
-      </Form.Item> */}
-
-      <Form.Item label={null}>
-        <Button type="primary" htmlType="submit">
-          Login
-        </Button>
-      </Form.Item>
-      <Link to={"/register"} className="flex justify-center">
-        crate an account
-      </Link>
-    </Form>
-  </>
-);
-export default Login;
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign in
+              </Button>
+              <Grid container>
+                {/* <Grid item xs>
+                  <Link href="#" variant="body2">
+                    Forgot password?
+                  </Link>
+                </Grid> */}
+                <Grid item>
+                  <Link href="/register" variant="body2">
+                    {"Don't have an account? Sign up"}
+                  </Link>
+                </Grid>
+              </Grid>
+            </Box>
+          </Box>
+        </Container>
+      </Box>
+    </ThemeProvider>
+  );
+}

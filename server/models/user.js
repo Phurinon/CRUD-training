@@ -5,7 +5,7 @@ const User = sequelize.define("User", {
   // Model attributes are defined here
   name: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   email: {
     type: DataTypes.STRING,
@@ -21,6 +21,10 @@ const User = sequelize.define("User", {
     allowNull: false,
   },
   role: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  gender: {
     type: DataTypes.STRING,
     allowNull: true,
   },

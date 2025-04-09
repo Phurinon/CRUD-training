@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import * as React from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -7,34 +7,21 @@ import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import { useNavigate } from "react-router-dom";
-import AppRegistrationOutlinedIcon from "@mui/icons-material/AppRegistrationOutlined";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "../../components/Theme";
-import { create, login } from "../../Functions/auth";
 
 export default function SignIn() {
-  const navigate = useNavigate();
-  const [form, setForm] = useState({
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    create(form)
-      .then((res) => {
-        console.log(res);
-        navigate("/login");
-      })
-      .catch((err) => console.log(err));
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const data = new FormData(event.currentTarget);
+    console.log({
+      email: data.get("email"),
+      password: data.get("password"),
+    });
   };
 
   return (
@@ -62,10 +49,10 @@ export default function SignIn() {
             }}
           >
             <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-              <AppRegistrationOutlinedIcon />
+              <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
-              Sign up
+              Sign in
             </Typography>
             <Box
               component="form"
@@ -82,7 +69,6 @@ export default function SignIn() {
                 name="email"
                 autoComplete="email"
                 autoFocus
-                onChange={(e) => handleChange(e)}
               />
               <TextField
                 margin="normal"
@@ -93,29 +79,28 @@ export default function SignIn() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                onChange={(e) => handleChange(e)}
               />
-              {/* <FormControlLabel
+              <FormControlLabel
                 control={<Checkbox value="remember" color="primary" />}
                 label="Remember me"
-              /> */}
+              />
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign Up
+                Sign In
               </Button>
               <Grid container>
-                {/* <Grid item xs>
+                <Grid item xs>
                   <Link href="#" variant="body2">
                     Forgot password?
                   </Link>
-                </Grid> */}
+                </Grid>
                 <Grid item>
                   <Link href="/login" variant="body2">
-                    {"Already have an account? Sign in"}
+                    {"Don't have an account? Sign Up"}
                   </Link>
                 </Grid>
               </Grid>

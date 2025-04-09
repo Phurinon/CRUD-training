@@ -61,7 +61,9 @@ router.put("/update/:id", async (req, res) => {
     const user = await User.update(
       {
         name: data.name,
-        email: data.email,
+        age: data.age,
+        role: data.role,
+        gender: data.gender,
       },
       {
         where: {

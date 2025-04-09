@@ -7,11 +7,11 @@ const { User } = require("../models/user");
 
 router.post("/register", async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, age, role } = req.body;
 
-    if (!name) {
-      return res.status(400).json({ message: "Username is required" });
-    }
+    // if (!name) {
+    //   return res.status(400).json({ message: "Username is required" });
+    // }
 
     if (!email) {
       return res.status(400).json({ message: "Email is required" });
@@ -37,6 +37,8 @@ router.post("/register", async (req, res) => {
     const createUser = await User.create({
       name,
       email,
+      age,
+      role,
       password: hashedPassword,
     });
 
@@ -87,7 +89,7 @@ router.post("/login", async (req, res) => {
         if (err) {
           return res.status(404).json({ message: "User not found" });
         }
-        res.json({ payload, token });
+        res.json({ payload, token, id: user.id });
       }
     );
   } catch (err) {
