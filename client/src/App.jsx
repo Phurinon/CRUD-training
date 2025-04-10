@@ -4,31 +4,16 @@ import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
 import FormUser from "./components/FormUser";
 import FormEditUser from "./components/FormEditUser";
 import Register from "./pages/auth/register";
-import Login from "./pages/auth/login";
+import Login from "./pages/auth/Login";
 import Info from "./pages/Info";
 import Navbar from "./components/Navbar";
+import NewNavbar from "./components/NewNavbar";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
     <BrowserRouter>
-      {/* <div className="text-4xl font-bold">
-        <Link to={"/"} className="px-2">
-          Home
-        </Link>
-        <Link to={"/register"} className="px-2">
-          Register
-        </Link>
-        <Link to={"/login"} className="px-2">
-          Login
-        </Link>
-        <Link to={"/form"} className="px-2">
-          Form
-        </Link>
-        <Link to={"/info"} className="px-2">
-          Info
-        </Link>
-      </div> */}
-      <Navbar />
+      <NewNavbar />
 
       <Routes>
         <Route path="/edit/:id" element={<FormEditUser />} />
@@ -36,6 +21,7 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/form/:id" element={<FormUser />} />
         <Route path="/info" element={<Info />} />
+        <Route path="/" element={<Home />} />
       </Routes>
     </BrowserRouter>
   );

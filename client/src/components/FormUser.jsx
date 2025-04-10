@@ -42,11 +42,11 @@ export default function FormUser() {
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <div>
       <CssBaseline />
       <Box
         sx={{
-          backgroundColor: theme.palette.background.default || "#f5f5f5",
+          // backgroundColor: theme.palette.background.default || "#f5f5f5",
           minHeight: "100vh",
           display: "flex",
           alignItems: "center",
@@ -140,6 +140,6 @@ export default function FormUser() {
           </Box>
         </Container>
       </Box>
-    </ThemeProvider>
+    </div>
   );
 }

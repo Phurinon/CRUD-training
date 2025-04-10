@@ -3,8 +3,6 @@ import { useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -14,7 +12,7 @@ import Container from "@mui/material/Container";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "../../components/Theme";
-import { create, login } from "../../Functions/auth";
+import { login } from "../../Functions/auth";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -23,26 +21,78 @@ export default function Login() {
     password: "",
   });
 
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  });
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // ฟังก์ชันตรวจสอบข้อมูลก่อนส่ง
+  const validate = () => {
+    let isValid = true;
+    const newErrors = { email: "", password: "" };
+
+    // ตรวจสอบ email
+    if (!form.email) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+      newErrors.email = "Email is invalid";
+      isValid = false;
+    }
+
+    // ตรวจสอบ password
+    if (!form.password) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    } else if (form.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    login(form)
-      .then((res) => {
-        console.log(res);
-        navigate("/form/" + res.data.id);
-      })
-      .catch((err) => console.log(err));
+
+    if (validate()) {
+      login(form)
+        .then((res) => {
+          console.log(res);
+          // ตรวจสอบว่า password ถูกต้องหรือไม่
+          if (res.status === 200 && res.data.token) {
+            localStorage.setItem("authtoken", res.data.token);
+            localStorage.setItem("user", JSON.stringify(res.data.payload.name));
+            navigate("/form/" + res.data.id);
+          } else {
+            // กรณีรหัสผ่านไม่ถูกต้อง
+            setErrors({
+              ...errors,
+              password: "Incorrect password or email",
+            });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setErrors({
+            ...errors,
+            password: "Incorrect password or email", // กรณีเกิดข้อผิดพลาดจากการเชื่อมต่อ API
+          });
+        });
+    }
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <div>
       <CssBaseline />
       <Box
         sx={{
-          backgroundColor: theme.palette.background.default || "#f5f5f5",
+          // backgroundColor: "blue-100",
           minHeight: "100vh",
           display: "flex",
           alignItems: "center",
@@ -82,7 +132,9 @@ export default function Login() {
                 name="email"
                 autoComplete="email"
                 autoFocus
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
               />
               <TextField
                 margin="normal"
@@ -93,7 +145,9 @@ export default function Login() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
+                error={!!errors.password}
+                helperText={errors.password}
               />
 
               <Button
@@ -105,11 +159,6 @@ export default function Login() {
                 Sign in
               </Button>
               <Grid container>
-                {/* <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid> */}
                 <Grid item>
                   <Link href="/register" variant="body2">
                     {"Don't have an account? Sign up"}
@@ -120,6 +169,6 @@ export default function Login() {
           </Box>
         </Container>
       </Box>
-    </ThemeProvider>
+    </div>
   );
 }

@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -14,7 +12,7 @@ import Container from "@mui/material/Container";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "../../components/Theme";
-import { create, login } from "../../Functions/auth";
+import { create } from "../../Functions/auth";
 
 export default function SignIn() {
   const navigate = useNavigate();
@@ -23,26 +21,61 @@ export default function SignIn() {
     password: "",
   });
 
+  const [errors, setErrors] = useState({
+    email: "",
+    password: "",
+  });
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // ฟังก์ชันตรวจสอบข้อมูลก่อนส่ง
+  const validate = () => {
+    let isValid = true;
+    const newErrors = { email: "", password: "" };
+
+    // ตรวจสอบ email
+    if (!form.email) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+      newErrors.email = "Email is invalid";
+      isValid = false;
+    }
+
+    // ตรวจสอบ password
+    if (!form.password) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    } else if (form.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    create(form)
-      .then((res) => {
-        console.log(res);
-        navigate("/login");
-      })
-      .catch((err) => console.log(err));
+
+    if (validate()) {
+      create(form)
+        .then((res) => {
+          console.log(res);
+          navigate("/login");
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   return (
-    <ThemeProvider theme={theme}>
+    <div>
       <CssBaseline />
       <Box
         sx={{
-          backgroundColor: theme.palette.background.default || "#f5f5f5",
+          // backgroundColor: theme.palette.background.default || "#f5f5f5",
           minHeight: "100vh",
           display: "flex",
           alignItems: "center",
@@ -82,7 +115,9 @@ export default function SignIn() {
                 name="email"
                 autoComplete="email"
                 autoFocus
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
               />
               <TextField
                 margin="normal"
@@ -93,12 +128,10 @@ export default function SignIn() {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                onChange={(e) => handleChange(e)}
+                onChange={handleChange}
+                error={!!errors.password}
+                helperText={errors.password}
               />
-              {/* <FormControlLabel
-                control={<Checkbox value="remember" color="primary" />}
-                label="Remember me"
-              /> */}
               <Button
                 type="submit"
                 fullWidth
@@ -108,11 +141,6 @@ export default function SignIn() {
                 Sign Up
               </Button>
               <Grid container>
-                {/* <Grid item xs>
-                  <Link href="#" variant="body2">
-                    Forgot password?
-                  </Link>
-                </Grid> */}
                 <Grid item>
                   <Link href="/login" variant="body2">
                     {"Already have an account? Sign in"}
@@ -123,6 +151,6 @@ export default function SignIn() {
           </Box>
         </Container>
       </Box>
-    </ThemeProvider>
+    </div>
   );
 }

@@ -65,47 +65,53 @@ export default function Info() {
       .catch((err) => console.log(err));
   };
   return (
-    <TableContainer component={Paper} sx={{ padding: 10 }}>
-      <Table sx={{ minWidth: 700 }} aria-label="customized table">
-        <TableHead>
-          <TableRow>
-            <StyledTableCell>Name</StyledTableCell>
-            <StyledTableCell align="right">Email</StyledTableCell>
-            <StyledTableCell align="right">Age</StyledTableCell>
-            <StyledTableCell align="right">Role</StyledTableCell>
-            <StyledTableCell align="right">Gender</StyledTableCell>
-            <StyledTableCell align="right">Delete</StyledTableCell>
-            <StyledTableCell align="right">Edit</StyledTableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {data
-            ? data.map((item, index) => (
-                <StyledTableRow key={index}>
-                  <StyledTableCell component="th" scope="row">
-                    {item.name}
-                  </StyledTableCell>
-                  <StyledTableCell align="right">{item.email}</StyledTableCell>
-                  <StyledTableCell align="right">{item.age}</StyledTableCell>
-                  <StyledTableCell align="right">{item.role}</StyledTableCell>
-                  <StyledTableCell align="right">{item.gender}</StyledTableCell>
-                  <StyledTableCell
-                    align="right"
-                    onClick={() => handleDelete(item.id)}
-                    className="!text-red-700"
-                  >
-                    Delete
-                  </StyledTableCell>
-                  <StyledTableCell align="right">
-                    <Link to={"/edit/" + item.id} className="!text-blue-700">
-                      Edit
-                    </Link>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))
-            : null}
-        </TableBody>
-      </Table>
-    </TableContainer>
+    <div>
+      <TableContainer component={Paper} sx={{ padding: 10 }}>
+        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>Name</StyledTableCell>
+              <StyledTableCell align="right">Email</StyledTableCell>
+              <StyledTableCell align="right">Age</StyledTableCell>
+              <StyledTableCell align="right">Role</StyledTableCell>
+              <StyledTableCell align="right">Gender</StyledTableCell>
+              <StyledTableCell align="right">Delete</StyledTableCell>
+              <StyledTableCell align="right">Edit</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {data
+              ? data.map((item, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell component="th" scope="row">
+                      {item.name}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      {item.email}
+                    </StyledTableCell>
+                    <StyledTableCell align="right">{item.age}</StyledTableCell>
+                    <StyledTableCell align="right">{item.role}</StyledTableCell>
+                    <StyledTableCell align="right">
+                      {item.gender}
+                    </StyledTableCell>
+                    <StyledTableCell
+                      align="right"
+                      onClick={() => handleDelete(item.id)}
+                      className="!text-red-700"
+                    >
+                      Delete
+                    </StyledTableCell>
+                    <StyledTableCell align="right">
+                      <Link to={"/edit/" + item.id} className="!text-blue-700">
+                        Edit
+                      </Link>
+                    </StyledTableCell>
+                  </StyledTableRow>
+                ))
+              : null}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 }

@@ -3,8 +3,9 @@ const router = express.Router();
 const { sequelize } = require("../config/db");
 const { User } = require("../models/user");
 const { Address } = require("../models/address");
+const { auth } = require("../Middleware/auth");
 
-router.get("/list", async (req, res) => {
+router.get("/list", auth, async (req, res) => {
   try {
     const users = await User.findAll();
     res.json(users);

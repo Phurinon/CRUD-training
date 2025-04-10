@@ -4,7 +4,7 @@ const defaultTheme = createTheme({
   palette: {
     // mode: "dark",
     background: {
-      //   default: "#0A0F1C",
+      // default: "blue-50",
       backdropFilter: "blur(10px)",
       boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
     },
