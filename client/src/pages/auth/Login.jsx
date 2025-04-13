@@ -67,6 +67,7 @@ export default function Login() {
           // ตรวจสอบว่า password ถูกต้องหรือไม่
           if (res.status === 200 && res.data.token) {
             localStorage.setItem("authtoken", res.data.token);
+            localStorage.setItem("id", res.data.id);
             localStorage.setItem("user", JSON.stringify(res.data.payload.name));
             navigate("/form/" + res.data.id);
           } else {

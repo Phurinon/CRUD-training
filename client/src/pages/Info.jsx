@@ -31,20 +31,9 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-// function createData(name, calories, fat, carbs, protein) {
-//   return { name, calories, fat, carbs, protein };
-// }
-
-// const rows = [
-//   createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-//   createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-//   createData("Eclair", 262, 16.0, 24, 6.0),
-//   createData("Cupcake", 305, 3.7, 67, 4.3),
-//   createData("Gingerbread", 356, 16.0, 49, 3.9),
-// ];
-
 export default function Info() {
   const [data, setData] = useState([]);
+  const currentUserId = parseInt(localStorage.getItem("id"));
 
   useEffect(() => {
     loadData();
@@ -94,17 +83,29 @@ export default function Info() {
                     <StyledTableCell align="right">
                       {item.gender}
                     </StyledTableCell>
-                    <StyledTableCell
-                      align="right"
-                      onClick={() => handleDelete(item.id)}
-                      className="!text-red-700"
-                    >
-                      Delete
+                    <StyledTableCell align="right">
+                      {item.id === currentUserId ? (
+                        <span
+                          onClick={() => handleDelete(item.id)}
+                          className="!text-red-700 cursor-pointer"
+                        >
+                          Delete
+                        </span>
+                      ) : (
+                        "-"
+                      )}
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      <Link to={"/edit/" + item.id} className="!text-blue-700">
-                        Edit
-                      </Link>
+                      {item.id === currentUserId ? (
+                        <Link
+                          to={"/edit/" + item.id}
+                          className="!text-blue-700"
+                        >
+                          Edit
+                        </Link>
+                      ) : (
+                        "-"
+                      )}
                     </StyledTableCell>
                   </StyledTableRow>
                 ))
