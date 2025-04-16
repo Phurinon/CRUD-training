@@ -3,7 +3,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { BrowserRouter, Route, Routes, Link } from "react-router-dom";
 import FormUser from "./components/FormUser";
 import FormEditUser from "./components/FormEditUser";
-import Register from "./pages/auth/register";
+import Register from "./pages/auth/Register";
 import Login from "./pages/auth/Login";
 import Info from "./pages/Info";
 import Navbar from "./components/Navbar";
