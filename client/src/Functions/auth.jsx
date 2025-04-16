@@ -9,3 +9,7 @@ export const create = async (data) => {
 export const login = async (data) => {
   return await axios.post(API_URL + "/auth/login", data);
 };
+
+export const check = async (email) => {
+  return await axios.get(API_URL + "/auth/check-email", { params: { email } });
+};

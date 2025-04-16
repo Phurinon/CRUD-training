@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -12,10 +12,11 @@ import Container from "@mui/material/Container";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "../../components/Theme";
-import { create } from "../../Functions/auth";
+import { create, check } from "../../Functions/auth";
 
 export default function SignIn() {
   const navigate = useNavigate();
+  const isLoggedIn = !!localStorage.getItem("authtoken");
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -30,8 +31,14 @@ export default function SignIn() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/", { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
+
   // ฟังก์ชันตรวจสอบข้อมูลก่อนส่ง
-  const validate = () => {
+  const validate = async () => {
     let isValid = true;
     const newErrors = { email: "", password: "" };
 
@@ -42,6 +49,18 @@ export default function SignIn() {
     } else if (!/\S+@\S+\.\S+/.test(form.email)) {
       newErrors.email = "Email is invalid";
       isValid = false;
+    } else {
+      try {
+        const response = await check(form.email);
+        if (response.data.exists) {
+          newErrors.email = "Email already exists";
+          isValid = false;
+        }
+      } catch (err) {
+        console.error("Error checking email:", err);
+        newErrors.email = "Could not verify email. Please try again.";
+        isValid = false;
+      }
     }
 
     // ตรวจสอบ password

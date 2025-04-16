@@ -16,10 +16,6 @@ import { useTheme } from "@mui/material/styles";
 
 // --- ไอคอน ---
 // วิธีที่ 1: ใช้ไอคอน SVG ของคุณ (แนะนำให้ปรับขนาดใน CSS หรือ sx prop)
-import homeIconSvg from "../assets/icons/home.svg";
-const HomeIcon = () => (
-  <img src={homeIconSvg} alt="Home Icon" style={{ width: 20, height: 20 }} /> // ปรับขนาดตามต้องการ
-);
 
 // วิธีที่ 2: (แนะนำ) ใช้ไอคอนจาก Material UI โดยตรง (ถ้ามีไอคอนที่ต้องการ)
 // import HomeIconMui from '@mui/icons-material/Home';

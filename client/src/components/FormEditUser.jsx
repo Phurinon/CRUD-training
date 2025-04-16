@@ -16,6 +16,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./Theme";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { read, update } from "../Functions/user";
+import Swal from "sweetalert2";
 
 const FormEditUser = () => {
   const params = useParams();
@@ -44,12 +45,32 @@ const FormEditUser = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    update(params.id, form)
-      .then((res) => {
-        console.log(res);
-        navigate("/info");
-      })
-      .catch((err) => console.log(err));
+
+    Swal.fire({
+      title: "Do you want to save the changes?",
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: "Save",
+      denyButtonText: `Don't save`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // ถ้ากด Save → ค่อย update
+        update(params.id, form)
+          .then((res) => {
+            Swal.fire("Saved!", "", "success").then(() => {
+              navigate("/info");
+            });
+          })
+          .catch((err) => {
+            Swal.fire("Error", "Something went wrong", "error");
+            console.log(err);
+          });
+      } else if (result.isDenied) {
+        Swal.fire("Changes are not saved", "", "info").then(() => {
+          navigate("/info");
+        });
+      }
+    });
   };
 
   return (

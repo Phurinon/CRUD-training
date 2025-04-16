@@ -98,4 +98,10 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/check-email", async (req, res) => {
+  const { email } = req.query;
+  const user = await User.findOne({ email });
+  res.json({ exists: !!user });
+});
+
 module.exports = router;

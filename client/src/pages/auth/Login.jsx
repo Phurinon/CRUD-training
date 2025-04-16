@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
@@ -16,6 +16,7 @@ import { login } from "../../Functions/auth";
 
 export default function Login() {
   const navigate = useNavigate();
+  const isLoggedIn = !!localStorage.getItem("authtoken");
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -29,6 +30,12 @@ export default function Login() {
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/", { replace: true });
+    }
+  }, [isLoggedIn, navigate]);
 
   // ฟังก์ชันตรวจสอบข้อมูลก่อนส่ง
   const validate = () => {
@@ -69,7 +76,8 @@ export default function Login() {
             localStorage.setItem("authtoken", res.data.token);
             localStorage.setItem("id", res.data.id);
             localStorage.setItem("user", JSON.stringify(res.data.payload.name));
-            navigate("/form/" + res.data.id);
+            navigate("/info");
+            // navigate("/form/" + res.data.id);
           } else {
             // กรณีรหัสผ่านไม่ถูกต้อง
             setErrors({
