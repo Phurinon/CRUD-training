@@ -6,6 +6,7 @@ const User = require("./models/user");
 const Address = require("./models/address");
 const Employee = require("./models/employee");
 const cors = require("cors");
+const logger = require("./logger");
 
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
@@ -15,7 +16,13 @@ const adminRoutes = require("./routes/admin");
 dotenv.config();
 const app = express();
 
-app.use(morgan("dev"));
+app.use(
+  morgan("combined", {
+    stream: {
+      write: (message) => logger.info(message.trim()),
+    },
+  })
+);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,6 +34,9 @@ app.use("/api/admin", adminRoutes);
 
 // console.log(process.env.MARIADB_DB)
 connectDB();
+
+// logger.info("This is an info log");
+// logger.error("This is an error log for testing");
 
 sequelize
   .sync()
