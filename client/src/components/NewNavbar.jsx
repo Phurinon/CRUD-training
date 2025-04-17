@@ -51,14 +51,14 @@ export default function Navbar() {
 
   return (
     <nav className="bg-blue-100 py-2 px-6">
-      <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className="max-w-8xl mx-auto px-5 flex justify-between items-center">
         {/* Logo */}
         <Link to="/" className="flex space-x-4">
           <HeartIcon />
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex ml-5 mr-auto space-x-5">
+        <div className="hidden md:flex ml-10 mr-auto space-x-5">
           {" "}
           {navItems
             .filter((item) => !item.requiresAuth || isLoggedIn) // Show only if requiresAuth is true and user is logged in
