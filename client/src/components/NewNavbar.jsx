@@ -1,30 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-// Import the SHINE logo or create it as a component
-const ShineLogo = () => (
-  <div className="flex items-center">
-    <span className="text-blue-500 text-2xl font-bold">
-      <span className="inline-block mr-1">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke-width="1.5"
-          stroke="currentColor"
-          class="size-6"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-          />
-        </svg>
-      </span>
-    </span>
-  </div>
-);
-
 const HeartIcon = () => {
   return (
     <svg
@@ -74,18 +50,16 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-blue-100 py-4 px-6">
+    <nav className="bg-blue-100 py-2 px-6">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         {/* Logo */}
-        <Link to="/" className="flex-shrink-0">
+        <Link to="/" className="flex space-x-4">
           <HeartIcon />
-          {/* <ShineLogo /> */}
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex items-center space-x-6 ">
+        <div className="hidden md:flex ml-5 mr-auto space-x-5">
           {" "}
-          {/* Add ml-auto to push the nav items to the right */}
           {navItems
             .filter((item) => !item.requiresAuth || isLoggedIn) // Show only if requiresAuth is true and user is logged in
             .map((item) => (
@@ -100,7 +74,7 @@ export default function Navbar() {
         </div>
 
         {/* Display Sign in / Sign up or Logout */}
-        <div className="hidden md:flex">
+        <div className="hidden md:flex space-x-1">
           {!isLoggedIn ? (
             <>
               <Link
