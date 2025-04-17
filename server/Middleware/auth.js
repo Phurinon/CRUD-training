@@ -25,12 +25,10 @@ const auth = async (req, res, next) => {
 
 const adminCheck = async (req, res, next) => {
   try {
-    const email = req.user.email;
-    const adminUser = await User.findOne({
-      where: { email: email },
-    });
-    if (!adminUser || adminUser.isAdmin !== 1) {
-      return res.status(403).json({ message: "Acess Denied: Admin Only" });
+    const { isAdmin } = req.user;
+
+    if (!isAdmin) {
+      return res.status(403).json({ message: "Access Denied: Admin Only" });
     }
 
     next();

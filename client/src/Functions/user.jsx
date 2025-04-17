@@ -36,7 +36,11 @@ export const getData = async () => {
 };
 
 export const remove = async (id) => {
-  await axios.delete(API_URL + "/user/remove/" + id);
+  await axios.delete(API_URL + "/user/remove/" + id, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("authtoken")}`,
+    },
+  });
 };
 
 export const create = async (data) => {
@@ -52,5 +56,9 @@ export const read = async (id) => {
 };
 
 export const update = async (id, data) => {
-  return await axios.put(API_URL + "/user/update/" + id, data);
+  return await axios.put(API_URL + "/user/update/" + id, data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem("authtoken")}`,
+    },
+  });
 };
