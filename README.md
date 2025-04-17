@@ -1,3 +1,6 @@
 # CRUD-training
 
-CRUD by using Sequelize ORM and mariaDB Database
+Tech Stack
+Database: mariaDB and Sequelize ORM
+Backend: Node.js + Express.js
+Frontend: React + Vite + Tailwind
