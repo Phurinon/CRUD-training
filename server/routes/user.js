@@ -2,12 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { sequelize } = require("../config/db");
 const { User } = require("../models/user");
-const { Address } = require("../models/address");
-const { auth } = require("../Middleware/auth");
+const { Employee } = require("../models/employee");
+const { auth, adminCheck } = require("../Middleware/auth");
 
 router.get("/list", auth, async (req, res) => {
   try {
-    const users = await User.findAll();
+    const users = await Employee.findAll();
     res.json(users);
   } catch (err) {
     console.log(err);
@@ -27,7 +27,7 @@ router.get("/listBy/:id", async (req, res) => {
       });
     }
 
-    const user = await User.findOne({
+    const user = await Employee.findOne({
       where: {
         id: userId,
       },
@@ -44,7 +44,9 @@ router.get("/listBy/:id", async (req, res) => {
 
 router.post("/create", async (req, res) => {
   try {
-    const user = await User.create(req.body);
+    const user = await Employee.create({
+      ...req.body,
+    });
     res.json(user);
   } catch (err) {
     console.log(err);
@@ -55,11 +57,11 @@ router.post("/create", async (req, res) => {
   }
 });
 
-router.put("/update/:id", async (req, res) => {
+router.put("/update/:id", auth, adminCheck, async (req, res) => {
   try {
     const data = await req.body;
     const userId = await req.params.id;
-    const user = await User.update(
+    const user = await Employee.update(
       {
         name: data.name,
         age: data.age,
@@ -72,12 +74,6 @@ router.put("/update/:id", async (req, res) => {
         },
       }
     );
-
-    // for (let i = 0; i < data.addresses.length; i++) {
-    //   let cAddressData = data.addresses[i][i];
-    //   cAddressData.userId = userId;
-    //   const address = await Address.upsert(cAddressData);
-    // }
 
     res.json({
       message: "update complete!",
@@ -92,7 +88,7 @@ router.put("/update/:id", async (req, res) => {
   }
 });
 
-router.delete("/remove/:id", async (req, res) => {
+router.delete("/remove/:id", auth, adminCheck, async (req, res) => {
   try {
     const userId = await req.params.id;
     if (!userId) {
@@ -100,7 +96,7 @@ router.delete("/remove/:id", async (req, res) => {
         message: "userId is required",
       });
     }
-    const result = await User.destroy({
+    const result = await Employee.destroy({
       where: { id: userId },
     });
 

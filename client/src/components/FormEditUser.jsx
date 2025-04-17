@@ -21,6 +21,20 @@ import Swal from "sweetalert2";
 const FormEditUser = () => {
   const params = useParams();
   const navigate = useNavigate();
+  const currentUser = localStorage.getItem("isAdmin");
+
+  useEffect(() => {
+    if (currentUser !== "true") {
+      Swal.fire({
+        icon: "error",
+        title: "Access Denied",
+        text: "This page is for admin only.",
+        confirmButtonText: "OK",
+      }).then(() => {
+        navigate("/info");
+      });
+    }
+  }, [currentUser]);
 
   const [form, setForm] = useState({
     name: "",
@@ -62,7 +76,7 @@ const FormEditUser = () => {
             });
           })
           .catch((err) => {
-            Swal.fire("Error", "Something went wrong", "error");
+            Swal.fire("Error", "Acess Denied: Admin Only", "error");
             console.log(err);
           });
       } else if (result.isDenied) {

@@ -1,26 +1,43 @@
 const jwt = require("jsonwebtoken");
+const { User } = require("../models/user");
 
-exports.auth = async (req, res, next) => {
+const auth = async (req, res, next) => {
   try {
-    // ดึง token จาก header "Authorization"
-    const token = req.headers["authorization"];
-    if (!token) {
+    const authHeader = req.headers["authorization"];
+    if (!authHeader) {
       return res.status(401).send("No Token");
     }
 
-    // แยก Bearer ออก
-    const tokenWithoutBearer = token.split(" ")[1];
+    const [type, token] = authHeader.split(" ");
 
-    if (!tokenWithoutBearer) {
+    if (type !== "Bearer" || !token) {
       return res.status(401).send("Token format is incorrect");
     }
 
-    // ยืนยัน token
-    const decoded = jwt.verify(tokenWithoutBearer, "jwtsecret");
-    req.user = decoded.user; // บันทึกข้อมูลผู้ใช้ที่ยืนยันแล้ว
-    next(); // ให้ไปยัง middleware ถัดไป
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded; // decoded จะมี user ข้อมูลที่คุณ sign ไว้
+    next();
   } catch (err) {
     console.log(err);
-    res.status(500).send("Invalid Token!!!"); // ส่งข้อความข้อผิดพลาดกรณี token ไม่ถูกต้อง
+    res.status(500).send("Invalid Token!!!");
   }
 };
+
+const adminCheck = async (req, res, next) => {
+  try {
+    const email = req.user.email;
+    const adminUser = await User.findOne({
+      where: { email: email },
+    });
+    if (!adminUser || adminUser.isAdmin !== 1) {
+      return res.status(403).json({ message: "Acess Denied: Admin Only" });
+    }
+
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error checking admin role" });
+  }
+};
+
+module.exports = { auth, adminCheck };

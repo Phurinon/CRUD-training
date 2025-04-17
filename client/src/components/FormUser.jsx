@@ -15,13 +15,15 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./Theme";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { read, update } from "../Functions/user";
+import { create, read, update } from "../Functions/user";
 
 export default function FormUser() {
   const params = useParams();
   const navigate = useNavigate();
+  const userId = localStorage.getItem("id");
   const [form, setForm] = useState({
     name: "",
+    email: "",
     age: "",
     role: "",
     gender: "",
@@ -33,7 +35,7 @@ export default function FormUser() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    update(params.id, form)
+    create({ ...form, userId: userId })
       .then((res) => {
         console.log(res);
         navigate("/info");
@@ -77,6 +79,18 @@ export default function FormUser() {
               noValidate
               sx={{ mt: 1 }}
             >
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                value={form.email}
+                onChange={handleChange}
+              />
               <TextField
                 margin="normal"
                 required

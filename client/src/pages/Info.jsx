@@ -38,8 +38,10 @@ export default function Info() {
   const params = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState([]);
-  const currentUserId = parseInt(localStorage.getItem("id"));
+  const currentUser = localStorage.getItem("isAdmin");
   const [currentUserData, setCurrentUserData] = useState(null);
+
+  // console.log(currentUserData);
 
   useEffect(() => {
     const id = parseInt(localStorage.getItem("id"));
@@ -74,9 +76,9 @@ export default function Info() {
         remove(id)
           .then((res) => {
             console.log(res);
-            localStorage.removeItem("authtoken");
-            localStorage.removeItem("user");
-            localStorage.removeItem("id");
+            // localStorage.removeItem("authtoken");
+            // localStorage.removeItem("user");
+            // localStorage.removeItem("id");
 
             Swal.fire({
               title: "Deleted!",
@@ -129,15 +131,8 @@ export default function Info() {
             variant="contained"
             sx={{ mt: 3 }}
             onClick={ishaveUser}
-            disabled={
-              currentUserData &&
-              currentUserData.name &&
-              currentUserData.age &&
-              currentUserData.role &&
-              currentUserData.gender
-            }
           >
-            Add your data
+            Add data
           </Button>
         </div>
       </div>
@@ -170,7 +165,7 @@ export default function Info() {
                       {item.gender}
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      {item.id === currentUserId ? (
+                      {currentUser === "true" ? (
                         <span
                           onClick={() => handleDelete(item.id)}
                           className="!text-red-700 cursor-pointer"
@@ -182,23 +177,13 @@ export default function Info() {
                       )}
                     </StyledTableCell>
                     <StyledTableCell align="right">
-                      {item.id === currentUserId ? (
-                        currentUserData &&
-                        currentUserData.name &&
-                        currentUserData.age &&
-                        currentUserData.role &&
-                        currentUserData.gender ? (
-                          <Link
-                            to={"/edit/" + item.id}
-                            className="!text-blue-700"
-                          >
-                            Edit
-                          </Link>
-                        ) : (
-                          <span className="text-gray-400 cursor-not-allowed">
-                            Edit
-                          </span>
-                        )
+                      {currentUser === "true" ? (
+                        <Link
+                          to={"/edit/" + item.id}
+                          className="!text-blue-700"
+                        >
+                          Edit
+                        </Link>
                       ) : (
                         "-"
                       )}

@@ -75,7 +75,10 @@ export default function Login() {
           if (res.status === 200 && res.data.token) {
             localStorage.setItem("authtoken", res.data.token);
             localStorage.setItem("id", res.data.id);
-            localStorage.setItem("user", JSON.stringify(res.data.payload.name));
+            localStorage.setItem(
+              "isAdmin",
+              JSON.stringify(res.data.payload.isAdmin)
+            );
             navigate("/info");
             // navigate("/form/" + res.data.id);
           } else {

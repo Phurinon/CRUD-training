@@ -1,4 +1,4 @@
-const config = require("../config");
+const config = require("../config1");
 const dotenv = require("dotenv");
 dotenv.config();
 const { Sequelize } = require("sequelize");
