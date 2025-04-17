@@ -1,24 +1,39 @@
-// logger.js
 const { createLogger, format, transports } = require("winston");
 const { combine, timestamp, printf, errors } = format;
+const DailyRotateFile = require("winston-daily-rotate-file");
 
-// รูปแบบ log message
 const logFormat = printf(({ level, message, timestamp, stack }) => {
   return `${timestamp} [${level}]: ${stack || message}`;
 });
 
-// สร้าง logger
 const logger = createLogger({
-  level: "info", // เก็บ log ตั้งแต่ระดับ info ขึ้นไป (info, warn, error)
+  level: "info",
   format: combine(
     timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    errors({ stack: true }), // เก็บ stack ของ error
+    errors({ stack: true }),
     logFormat
   ),
   transports: [
-    new transports.Console(), // แสดงใน console ด้วย
-    new transports.File({ filename: "logs/error.log", level: "error" }), // เก็บเฉพาะ error
-    new transports.File({ filename: "logs/combined.log" }), // เก็บทุกระดับที่ >= info
+    new transports.Console(),
+
+    // Log ทุกระดับ แยกไฟล์ตามวัน
+    new DailyRotateFile({
+      filename: "logs/combined-%DATE%.log",
+      datePattern: "YYYY-MM-DD",
+      zippedArchive: true,
+      maxSize: "20m",
+      maxFiles: "14d", // เก็บไว้ 14 วัน
+    }),
+
+    // Log error อย่างเดียว แยกไฟล์ตามวัน
+    new DailyRotateFile({
+      level: "error",
+      filename: "logs/error-%DATE%.log",
+      datePattern: "YYYY-MM-DD",
+      zippedArchive: true,
+      maxSize: "20m",
+      maxFiles: "30d", // เก็บ error ไว้นานกว่านิดหน่อย
+    }),
   ],
 });
 
