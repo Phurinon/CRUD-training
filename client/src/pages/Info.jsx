@@ -122,7 +122,7 @@ export default function Info() {
   return (
     <div>
       <div className="flex flex-col items-center justify-center ">
-        <div className="absolute top-20 right-20">
+        <div className="absolute top-15 right-20">
           <Button
             type="button"
             fullWidth
