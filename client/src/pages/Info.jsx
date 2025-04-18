@@ -85,7 +85,8 @@ export default function Info() {
               text: "User has been deleted.",
               icon: "success",
             }).then(() => {
-              window.location.reload();
+              // window.location.reload();
+              loadData();
             });
           })
           .catch((err) => {
