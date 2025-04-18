@@ -1,10 +1,11 @@
 module.exports = {
   development: {
-    username: "phurinon",
+    username: "rice",
     password: "Rice@2020",
-    database: "rice",
+    database: "phurinon",
     host: "203.159.95.167",
     dialect: "mariadb",
+    port: 4406,
   },
   test: {
     username: "root",

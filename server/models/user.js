@@ -17,6 +17,10 @@ const User = sequelize.define("User", {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  refreshToken: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
 });
 
 module.exports = { User };
