@@ -79,6 +79,9 @@ const FormEditUser = () => {
     if (!form.age) {
       newErrors.age = "Age is required";
       isValid = false;
+    } else if (isNaN(form.age)) {
+      newErrors.age = "Age must be a number";
+      isValid = false;
     }
     // ตรวจสอบ role
     if (!form.role) {
