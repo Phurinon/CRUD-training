@@ -17,7 +17,7 @@ dotenv.config();
 const app = express();
 
 app.use(
-  morgan("combined", {
+  morgan("tiny", {
     stream: {
       write: (message) => logger.info(message.trim()),
     },
