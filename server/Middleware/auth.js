@@ -19,7 +19,7 @@ const auth = async (req, res, next) => {
     next();
   } catch (err) {
     console.log(err);
-    res.status(500).send("Invalid Token!!!");
+    res.status(401).json({ message: err.message }); // ส่งข้อความ error กลับไป
   }
 };
 

@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from "../axiosInstance";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -61,4 +61,8 @@ export const update = async (id, data) => {
       Authorization: `Bearer ${localStorage.getItem("authtoken")}`,
     },
   });
+};
+
+export const check = async (email) => {
+  return await axios.get(API_URL + "/user/check-email", { params: { email } });
 };
