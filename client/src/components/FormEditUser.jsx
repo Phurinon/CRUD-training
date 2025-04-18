@@ -43,6 +43,14 @@ const FormEditUser = () => {
     gender: "",
   });
 
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    age: "",
+    role: "",
+    gender: "",
+  });
+
   useEffect(() => {
     loadData(params.id);
   }, []);
@@ -57,34 +65,68 @@ const FormEditUser = () => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // ฟังก์ชันตรวจสอบข้อมูลก่อนส่ง
+  const validate = async () => {
+    let isValid = true;
+    const newErrors = { name: "", age: "", role: "", gender: "" };
+
+    // ตรวจสอบ name
+    if (!form.name) {
+      newErrors.name = "Name is required";
+      isValid = false;
+    }
+    // ตรวจสอบ age
+    if (!form.age) {
+      newErrors.age = "Age is required";
+      isValid = false;
+    }
+    // ตรวจสอบ role
+    if (!form.role) {
+      newErrors.role = "Role is required";
+      isValid = false;
+    }
+    // ตรวจสอบ gender
+    if (!form.gender) {
+      newErrors.gender = "Gender is required";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    Swal.fire({
-      title: "Do you want to save the changes?",
-      showDenyButton: true,
-      showCancelButton: true,
-      confirmButtonText: "Save",
-      denyButtonText: `Don't save`,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        // ถ้ากด Save → ค่อย update
-        update(params.id, form)
-          .then((res) => {
-            Swal.fire("Saved!", "", "success").then(() => {
-              navigate("/info");
+    const isValid = await validate(); // ✅ รอ validate ทำงานเสร็จก่อน
+
+    if (isValid) {
+      Swal.fire({
+        title: "Do you want to save the changes?",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Save",
+        denyButtonText: `Don't save`,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // ถ้ากด Save → ค่อย update
+          update(params.id, form)
+            .then((res) => {
+              Swal.fire("Saved!", "", "success").then(() => {
+                navigate("/info");
+              });
+            })
+            .catch((err) => {
+              Swal.fire("Error", "Acess Denied: Admin Only", "error");
+              console.log(err);
             });
-          })
-          .catch((err) => {
-            Swal.fire("Error", "Acess Denied: Admin Only", "error");
-            console.log(err);
+        } else if (result.isDenied) {
+          Swal.fire("Changes are not saved", "", "info").then(() => {
+            navigate("/info");
           });
-      } else if (result.isDenied) {
-        Swal.fire("Changes are not saved", "", "info").then(() => {
-          navigate("/info");
-        });
-      }
-    });
+        }
+      });
+    }
   };
 
   return (
@@ -134,6 +176,8 @@ const FormEditUser = () => {
                 autoFocus
                 value={form.name}
                 onChange={handleChange}
+                error={!!errors.name}
+                helperText={errors.name}
               />
               <TextField
                 margin="normal"
@@ -145,6 +189,8 @@ const FormEditUser = () => {
                 autoComplete="age"
                 value={form.age}
                 onChange={handleChange}
+                error={!!errors.age}
+                helperText={errors.age}
               />
               <TextField
                 margin="normal"
@@ -156,6 +202,8 @@ const FormEditUser = () => {
                 autoComplete="role"
                 value={form.role}
                 onChange={handleChange}
+                error={!!errors.role}
+                helperText={errors.role}
               />
               {/* Gender Select */}
               <FormControl fullWidth margin="normal" required>
@@ -167,6 +215,8 @@ const FormEditUser = () => {
                   label="Gender"
                   name="gender"
                   onChange={handleChange}
+                  error={!!errors.gender}
+                  helperText={errors.gender}
                 >
                   <MenuItem value="Men">Men</MenuItem>
                   <MenuItem value="Women">Women</MenuItem>

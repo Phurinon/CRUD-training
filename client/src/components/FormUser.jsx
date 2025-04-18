@@ -16,6 +16,7 @@ import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./Theme";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { create, read, update } from "../Functions/user";
+import Swal from "sweetalert2";
 
 export default function FormUser() {
   const params = useParams();
@@ -29,18 +30,101 @@ export default function FormUser() {
     gender: "",
   });
 
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    age: "",
+    role: "",
+    gender: "",
+  });
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  // ฟังก์ชันตรวจสอบข้อมูลก่อนส่ง
+  const validate = async () => {
+    let isValid = true;
+    const newErrors = { email: "", name: "", age: "", role: "", gender: "" };
+
+    // ตรวจสอบ email
+    if (!form.email) {
+      newErrors.email = "Email is required";
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(form.email)) {
+      newErrors.email = "Email is invalid";
+      isValid = false;
+    } else {
+      try {
+        const response = await check(form.email);
+        if (response.data.exists) {
+          newErrors.email = "Email already exists";
+          isValid = false;
+        }
+      } catch (err) {
+        console.error("Error checking email:", err);
+        newErrors.email = "Could not verify email. Please try again.";
+        isValid = false;
+      }
+    }
+
+    // ตรวจสอบ name
+    if (!form.name) {
+      newErrors.name = "Name is required";
+      isValid = false;
+    }
+    // ตรวจสอบ age
+    if (!form.age) {
+      newErrors.age = "Age is required";
+      isValid = false;
+    }
+    // ตรวจสอบ role
+    if (!form.role) {
+      newErrors.role = "Role is required";
+      isValid = false;
+    }
+    // ตรวจสอบ gender
+    if (!form.gender) {
+      newErrors.gender = "Gender is required";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    create({ ...form, userId: userId })
-      .then((res) => {
-        console.log(res);
-        navigate("/info");
-      })
-      .catch((err) => console.log(err));
+
+    const isValid = await validate(); // ✅ รอ validate ทำงานเสร็จก่อน
+
+    if (isValid) {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "Do you want to save this data?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, save it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          create({ ...form, userId: userId })
+            .then((res) => {
+              console.log(res);
+              Swal.fire("Saved!", "Your data has been saved.", "success").then(
+                () => {
+                  navigate("/info");
+                }
+              );
+            })
+            .catch((err) => {
+              console.log(err);
+              Swal.fire("Error", "Something went wrong!", "error");
+            });
+        }
+      });
+    }
   };
 
   return (
@@ -90,6 +174,8 @@ export default function FormUser() {
                 autoFocus
                 value={form.email}
                 onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
               />
               <TextField
                 margin="normal"
@@ -99,9 +185,10 @@ export default function FormUser() {
                 label="Name"
                 name="name"
                 autoComplete="name"
-                autoFocus
                 value={form.name}
                 onChange={handleChange}
+                error={!!errors.name}
+                helperText={errors.name}
               />
               <TextField
                 margin="normal"
@@ -113,6 +200,8 @@ export default function FormUser() {
                 autoComplete="age"
                 value={form.age}
                 onChange={handleChange}
+                error={!!errors.age}
+                helperText={errors.age}
               />
               <TextField
                 margin="normal"
@@ -124,6 +213,8 @@ export default function FormUser() {
                 autoComplete="role"
                 value={form.role}
                 onChange={handleChange}
+                error={!!errors.role}
+                helperText={errors.role}
               />
               {/* Gender Select */}
               <FormControl fullWidth margin="normal" required>
@@ -135,6 +226,8 @@ export default function FormUser() {
                   label="Gender"
                   name="gender"
                   onChange={handleChange}
+                  error={!!errors.gender}
+                  helperText={errors.gender}
                 >
                   <MenuItem value="Men">Men</MenuItem>
                   <MenuItem value="Women">Women</MenuItem>
