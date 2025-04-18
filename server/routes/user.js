@@ -111,4 +111,21 @@ router.delete("/remove/:id", auth, adminCheck, async (req, res) => {
   }
 });
 
+// Route สำหรับ check email
+router.get("/check-email", async (req, res) => {
+  const { email } = req.query;
+  logger.info(`Email to check: ${email}`);
+  try {
+    const user = await Employee.findOne({ where: { email: email } });
+    logger.info(`Result from findOne: ${user}`);
+    logger.info(
+      `GET /check-email - Email checked: ${email} - Exists: ${!!user}`
+    );
+    res.json({ exists: !!user });
+  } catch (err) {
+    logger.error("GET /check-email - Error: " + err.message, err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 module.exports = router;

@@ -15,7 +15,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import theme from "./Theme";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { create, read, update } from "../Functions/user";
+import { create, check } from "../Functions/user";
+
 import Swal from "sweetalert2";
 
 export default function FormUser() {
@@ -197,9 +198,9 @@ export default function FormUser() {
                 margin="normal"
                 required
                 fullWidth
-                name="age"
-                label="Age"
                 id="age"
+                label="Age"
+                name="age"
                 autoComplete="age"
                 value={form.age}
                 onChange={handleChange}
