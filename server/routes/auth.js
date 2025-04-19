@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const { User } = require("../models/user");
 const logger = require("../logger"); // นำเข้า logger
-
+require("dotenv").config();
 // Route สำหรับ register user
 router.post("/register", async (req, res) => {
   try {
@@ -83,22 +83,68 @@ router.post("/login", async (req, res) => {
       email: user.email,
     };
 
-    // สร้าง token
-    jwt.sign(
-      payload,
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" },
-      (err, token) => {
-        if (err) {
-          logger.error("POST /login - JWT error", err);
-          return res.status(404).json({ message: "User not found" });
+    // 👉 สร้าง Access Token
+    const accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "15m", // หรือ 10m ตามที่คุณต้องการ
+    });
+
+    // 👉 สร้าง Refresh Token
+    const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+      expiresIn: "7d",
+    });
+
+    // 👉 (Optional) เก็บ Refresh Token ลง DB
+    await User.update(
+      { refreshToken: refreshToken },
+      { where: { id: user.id } }
+    );
+
+    logger.info(`POST /login - User logged in: ${user.id}`);
+    res.json({ payload, accessToken, refreshToken, id: user.id });
+  } catch (err) {
+    logger.error("POST /login - Error: " + err.message, err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/refresh-token", async (req, res) => {
+  const { refreshToken } = req.body;
+
+  if (!refreshToken) {
+    return res.status(401).json({ message: "Refresh token required" });
+  }
+
+  try {
+    // ตรวจสอบว่า refresh token อยู่ใน database
+    const user = await User.findOne({ where: { refreshToken } });
+
+    if (!user) {
+      return res.status(403).json({ message: "Invalid refresh token" });
+    }
+
+    // ตรวจสอบความถูกต้องของ refresh token
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (err, decoded) => {
+        if (err || decoded.id !== user.id) {
+          return res
+            .status(403)
+            .json({ message: "Token is invalid or expired" });
         }
-        logger.info(`POST /login - User logged in: ${user.id}`);
-        res.json({ payload, token, id: user.id });
+
+        // สร้าง access token ใหม่
+        const accessToken = jwt.sign(
+          { id: user.id, email: user.email, isAdmin: user.isAdmin },
+          process.env.JWT_SECRET,
+          { expiresIn: "1h" }
+        );
+
+        res.json({ accessToken });
       }
     );
   } catch (err) {
-    logger.error("POST /login - Error: " + err.message, err);
+    console.error("Error in refresh-token:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -107,7 +153,7 @@ router.post("/login", async (req, res) => {
 router.get("/check-email", async (req, res) => {
   const { email } = req.query;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ where: { email: email } });
     logger.info(
       `GET /check-email - Email checked: ${email} - Exists: ${!!user}`
     );

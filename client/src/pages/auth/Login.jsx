@@ -72,8 +72,9 @@ export default function Login() {
         .then((res) => {
           console.log(res);
           // ตรวจสอบว่า password ถูกต้องหรือไม่
-          if (res.status === 200 && res.data.token) {
-            localStorage.setItem("authtoken", res.data.token);
+          if (res.status === 200 && res.data.accesstoken) {
+            localStorage.setItem("authtoken", res.data.accesstoken);
+            localStorage.setItem("refreshtoken", res.data.refreshtoken);
             localStorage.setItem("id", res.data.id);
             localStorage.setItem(
               "isAdmin",

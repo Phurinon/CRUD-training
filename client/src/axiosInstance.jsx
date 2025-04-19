@@ -1,37 +1,50 @@
-// src/axiosInstance.js
+// services/axiosInstance.js
 import axios from "axios";
-import Swal from "sweetalert2";
 
-const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000", // ปรับให้ตรงกับ backend ของคุณ
+const API = axios.create({
+  baseURL: import.meta.env.VITE_API_URL + "/auth",
 });
 
-// Interceptor สำหรับตรวจจับ token ที่หมดอายุ
-axiosInstance.interceptors.response.use(
+// ✅ ใส่ access token เข้า header
+API.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// ✅ ตรวจจับ token หมดอายุแล้วใช้ refresh token
+API.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const isExpired =
+    const originalRequest = error.config;
+
+    if (
       error.response &&
-      (error.response.status === 401 ||
-        error.response.data.message === "jwt expired");
+      error.response.status === 401 &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
 
-    if (isExpired) {
+      const refreshToken = localStorage.getItem("refreshToken");
+
       try {
-        const result = await Swal.fire({
-          title: "Session Expired",
-          text: "Please login again.",
-          icon: "warning",
-          confirmButtonText: "OK",
-          allowOutsideClick: false, // ไม่ให้คลิกนอก popup แล้วหาย
-          allowEscapeKey: false, // ไม่ให้กด Esc เพื่อปิด
-        });
+        const res = await axios.post(
+          import.meta.env.VITE_API_URL + "/auth/refresh-token",
+          { refreshToken }
+        );
 
-        if (result.isConfirmed) {
-          localStorage.clear();
-          window.location.href = "/login"; // เปลี่ยนเส้นทางไปยังหน้าล็อกอินหลังจากผู้ใช้กด OK
-        }
-      } catch (error) {
-        console.error("Error showing the popup", error);
+        const newAccessToken = res.data.accessToken;
+        localStorage.setItem("accessToken", newAccessToken);
+
+        // 🔁 ยิง request เดิมซ้ำ
+        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+        return API(originalRequest);
+      } catch (err) {
+        console.error("🔒 Refresh token invalid:", err);
+        localStorage.clear();
+        window.location.href = "/login"; // หรือ redirect ไปหน้า login
       }
     }
 
@@ -39,12 +52,4 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-axiosInstance.interceptors.request.use((config) => {
-  const token = localStorage.getItem("authtoken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export default axiosInstance;
+export default API;
